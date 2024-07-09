@@ -3,6 +3,8 @@
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,5 +45,19 @@ Route::post('/updateuser', [UserController::class, 'UpdateUser']);
 Route::post('/deleteuser', [UserController::class, 'DeleteUser']);
 Route::post('/login',[UserController::class, 'Login']);
 Route::get('/authUserVerify',[UserController::class, 'authUserVerify']);
-Route::get('/currentuser',[UserController::class, 'CurrentUser'])->middleware('auth');
+Route::get('/currentuser',[UserController::class, 'CurrentUser']);
 Route::post('/logout',[UserController::class, 'Logout']);
+
+//Project 
+Route::post('/createproject',[ProjectController::class, 'CreateProject']);
+Route::get('/allproject',[ProjectController::class, 'AllProject']);
+Route::get('/getproject/{id}',[ProjectController::class, 'GetProject']);
+Route::post('/updateproject',[ProjectController::class, 'UpdateProject']);
+Route::post('/deleteproject',[ProjectController::class, 'DeleteProject']);
+
+//task
+Route::post('/createtask',[TaskController::class, 'CreateTask']);
+Route::get('/alltask',[TaskController::class, 'AllTask']);
+Route::get('/gettask/{id}',[TaskController::class, 'GetTask']);
+Route::post('/updatetask',[TaskController::class, 'UpdateTask']);
+Route::post('/deletetask',[TaskController::class, 'DeleteTask']);

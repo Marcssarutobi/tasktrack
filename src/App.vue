@@ -332,7 +332,7 @@
                   </div>
                   <span class="profile-username">
                     <span class="op-7">Hi,</span>
-                    <span class="fw-bold">Hizrian</span>
+                    <span class="fw-bold">{{ currentUser.fistname }}</span>
                   </span>
                 </a>
                 <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -357,7 +357,7 @@
                       <div class="dropdown-divider"></div>
                       <a class="dropdown-item" href="#">Account Setting</a>
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">Logout</a>
+                      <span style="cursor:pointer;" class="dropdown-item" @click="logout">Logout</span>
                     </li>
                   </div>
                 </ul>
@@ -447,7 +447,7 @@
 
 <script>
 import login from './components/login.vue';
-
+import axiosInstance from '@/plugins/axios';
 export default {
   components:{
     login
@@ -457,6 +457,7 @@ export default {
     return {
       toggle_customSidebar: false,
       custom_open: 0,
+      currentUser:{}
     }
   },
   mounted(){
@@ -602,7 +603,32 @@ export default {
       selectedButtons.forEach(function(button) {
         button.innerHTML = checkmark; // Ajoute la coche au contenu du bouton sélectionné
       });
+    },
+    async logout() {
+      const res = await axiosInstance.post('/logout', null, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      if (res.status === 200) {
+        localStorage.removeItem('token')
+        this.$router.push("/login")
+      }
+    },
+    async CurrentUser() {
+      const res = await axiosInstance.get('/user', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      if (res.status === 200) {
+        this.currentUser = res.data
+        console.log(this.currentUser)
+      }
     }
+  },
+  created() {
+    this.CurrentUser()
   }
   
 }

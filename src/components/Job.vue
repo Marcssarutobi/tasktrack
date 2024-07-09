@@ -107,7 +107,7 @@
                 </div>
             </div>
             <div class="offcanvas-footer p-3 text-end">
-                <button class="btn btn-primary">Save</button>
+                <button class="btn btn-primary" @click="AddJob">Save</button>
             </div>
         </form>
     </div>

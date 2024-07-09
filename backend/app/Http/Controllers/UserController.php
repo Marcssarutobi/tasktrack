@@ -34,11 +34,13 @@ class UserController extends Controller
     }
     public function AllUser(){
         $user = User::orderBy('id','desc')->paginate(9);
+        $all = User::orderBy('id','desc')->get();
         $userN = User::count();
 
         return response()->json([
             "users"=>$user,
-            "userN"=>$userN
+            "userN"=>$userN,
+            "alluser"=>$all
         ]);
     }
     public function GetUser($id){
@@ -75,37 +77,47 @@ class UserController extends Controller
         ]);
     }
     public function Login(Request $request){
-       $user = $request->validate([
-            "email"=>["required","email"],
-            "password"=> "required"
-       ]);
-       $login = User::where("email", $user["email"])->first();
-       if (Auth::attempt($user)) {
-            $token = $login->createToken("CLE_SECRETE")->plainTextToken;
+       $login = $request->validate([
+            "email"=> ["required","email"],
+            "password"=> ["required","string","min:3","max:30"]
+        ]);
+
+        //$user = User::where("email",$login["email"])->first();
+
+        if (Auth::attempt($login)) {
+            $user = Auth::user(); 
+            $token = $user->createToken("CLE_SECRETE")->plainTextToken;
             return response()->json([
-                "user"=>$login,
-                "token"=>$token
-            ]);
-       }else{
+                "user" => $user,
+                "token" => $token      
+            ],200);
+        }else{
             return response()->json([
                 "message"=> "Adresse email ou mot de passe incorrect"
             ],401);
-       }
+        }
     }
     public function authUserVerify(){
-        //Vérifier si l'utilisateur est connecté
+        // Vérifier si un utilisateur est connecté
         if (Auth::check()) {
-            return response()->json([
-                'connect' => true
-            ]);
-        }else{
-            return response()->json([
-                'connect' => false
-            ]);
+        // L'utilisateur est connecté
+        // Vous pouvez accéder à l'utilisateur authentifié via auth()->user()
+        //$user = auth()->user();
+        return response()->json([
+            'connect' => true
+        ]);
+        // Faites ici ce que vous avez besoin de faire pour un utilisateur connecté
+        } else {
+        // L'utilisateur n'est pas connecté
+        // Faites ici ce que vous avez besoin de faire pour un utilisateur non connecté
+        return response()->json([
+            'connect' => false
+        ]);
         }
     }
     public function CurrentUser(){
-        $user = Auth::user();
+         $user = Auth::user();
+        
         if ($user) {
             return response()->json([
                 'user' => $user,

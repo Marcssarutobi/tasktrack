@@ -21,7 +21,7 @@
     <div class="row">
         <div class="col-md-12">
 
-            <Fullcalendar :options="calendarPlugins" />
+            <Fullcalendar :options="calendarPlugins" :events="calendarEvents" />
 
         </div>
     </div>
@@ -35,13 +35,14 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
+import axiosInstance from '@/plugins/axios';
 export default {
     components:{
         Fullcalendar
     },
     name:'CalendarVue',
     data(){
-        return{
+        return {
             calendarPlugins:{
                 plugins: [dayGridPlugin,timeGridPlugin,interactionPlugin,listPlugin],
                 headerToolbar: {
@@ -55,9 +56,29 @@ export default {
                     document.querySelectorAll('.fc-prev-button, .fc-next-button, .fc-button').forEach(button => {
                         button.classList.add('btn', 'btn-primary','me-2');
                     });
-                }
-            }
+                },
+                events:[]
+            },
+            allproject: {},
+            
         }
+    },
+    methods: {
+        async AllProject() {
+            const res = await axiosInstance.get('/allproject')
+            if (res.status === 200) {
+                this.allproject = res.data.all
+                const events = this.allproject.map(prj => ({
+                    title: prj.name,
+                    start: prj.startDate,
+                    end: prj.endDate
+                }))
+                this.calendarPlugins.events = events
+            }
+        },
+    },
+    created() {
+        this.AllProject()
     }
 }
 </script>

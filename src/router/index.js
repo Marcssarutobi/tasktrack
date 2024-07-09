@@ -59,21 +59,23 @@ const router = createRouter({
 
 
 async function isAuthenticated(){
-    const res = await axiosInstance.get("/authUserVerify");
+    const res = await axiosInstance.get("/user", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+    });
     if (res.status === 200) {
-        const data = res.data.connect
+        const data = res.data
         return data
-    }
-
-    return false
+    } 
 }
 
 router.beforeEach(async (to, from, next)=>{
     if (to.matched.some(record => record.meta.requiresAuth)) {
         try {
-            const auth = isAuthenticated()
+            const auth = await isAuthenticated()
             const token = localStorage.getItem('token')
-            if (auth && token) {
+            if (auth  && token) {
                 next();
             }else{
                 next('/login')

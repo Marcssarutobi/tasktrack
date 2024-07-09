@@ -54,4 +54,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Job::class);
     }
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+    public function task()
+    {
+        return $this->belongsTo(Task::class);
+    }
 }
