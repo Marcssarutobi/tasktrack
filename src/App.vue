@@ -53,7 +53,7 @@
             <li class="nav-item">
               <router-link  to="/notification" class="link">
                 <i class="fas fa-bell"></i>
-                <p>Notifications <span class="badge bg-success ms-3">4</span></p>
+                <p>Notifications <span class="badge bg-success ms-3">{{ $store.state.notificationCount }}</span></p>
               </router-link>
             </li>
             <li class="nav-item">
@@ -116,6 +116,7 @@
               </div>
             </nav>
 
+            <!-- navDesktop -->
             <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
               <li class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
@@ -130,6 +131,7 @@
                   </form>
                 </ul>
               </li>
+              <!-- Onglet message -->
               <li class="nav-item topbar-icon dropdown hidden-caret">
                 <a class="nav-link dropdown-toggle" href="#" id="messageDropdown" role="button"
                   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -196,70 +198,45 @@
                   </li>
                 </ul>
               </li>
+              <!-- Onglet message fin -->
+               <!-- Onglet notification -->
               <li class="nav-item topbar-icon dropdown hidden-caret">
                 <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown"
                   aria-haspopup="true" aria-expanded="false">
                   <i class="fa fa-bell"></i>
-                  <span class="notification">4</span>
+                  <span class="notification">{{ $store.state.notificationCount }}</span>
                 </a>
                 <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
                   <li>
                     <div class="dropdown-title">
-                      You have 4 new notification
+                      You have {{ $store.state.notificationCount }} new notification
                     </div>
                   </li>
                   <li>
                     <div class="notif-scroll scrollbar-outer">
                       <div class="notif-center">
-                        <a href="#">
+
+                        <a href="#" v-for="notif in allnotif" :key="notif.id">
                           <div class="notif-icon notif-primary">
-                            <i class="fa fa-user-plus"></i>
+                            <i class="fa fa-bell"></i>
                           </div>
                           <div class="notif-content">
-                            <span class="block"> New user registered </span>
-                            <span class="time">5 minutes ago</span>
+                            <span class="block"> {{ notif.subject }} </span>
+                            <span class="time">{{ formatCommentDate(notif.created_at) }}</span>
                           </div>
                         </a>
-                        <a href="#">
-                          <div class="notif-icon notif-success">
-                            <i class="fa fa-comment"></i>
-                          </div>
-                          <div class="notif-content">
-                            <span class="block">
-                              Rahmad commented on Admin
-                            </span>
-                            <span class="time">12 minutes ago</span>
-                          </div>
-                        </a>
-                        <a href="#">
-                          <div class="notif-img">
-                            <img src="./assets/img/profile2.jpg" alt="Img Profile" />
-                          </div>
-                          <div class="notif-content">
-                            <span class="block">
-                              Reza send messages to you
-                            </span>
-                            <span class="time">12 minutes ago</span>
-                          </div>
-                        </a>
-                        <a href="#">
-                          <div class="notif-icon notif-danger">
-                            <i class="fa fa-heart"></i>
-                          </div>
-                          <div class="notif-content">
-                            <span class="block"> Farrah liked Admin </span>
-                            <span class="time">17 minutes ago</span>
-                          </div>
-                        </a>
+
                       </div>
                     </div>
                   </li>
                   <li>
-                    <a class="see-all" href="javascript:void(0);">See all notifications<i class="fa fa-angle-right"></i>
-                    </a>
+                    <router-link class="see-all" to="/notification">See all notifications<i class="fa fa-angle-right"></i>
+                    </router-link>
                   </li>
                 </ul>
               </li>
+               <!-- Onglet notification fin -->
+               <!-- Onglet Action rapide -->
               <li class="nav-item topbar-icon dropdown hidden-caret">
                 <a class="nav-link" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                   <i class="fas fa-layer-group"></i>
@@ -325,6 +302,7 @@
                   </div>
                 </div>
               </li>
+              <!-- Onglet Action rapide fin -->
               <li class="nav-item topbar-user dropdown hidden-caret">
                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                   <div class="avatar-sm">
@@ -343,8 +321,8 @@
                           <img src="./assets/img/profile.jpg" alt="image profile" class="avatar-img rounded" />
                         </div>
                         <div class="u-text">
-                          <h4>Hizrian</h4>
-                          <p class="text-muted">hello@example.com</p>
+                          <h4>{{ currentUser.fistname }}</h4>
+                          <p class="text-muted">{{ currentUser.email }}</p>
                           <router-link to="/profil" class="btn btn-xs btn-secondary btn-sm">View Profile</router-link>
                         </div>
                       </div>
@@ -448,6 +426,8 @@
 <script>
 import login from './components/login.vue';
 import axiosInstance from '@/plugins/axios';
+import { formatDistance,format, isSameDay } from 'date-fns';
+import { enUS } from "date-fns/locale";
 export default {
   components:{
     login
@@ -457,7 +437,9 @@ export default {
     return {
       toggle_customSidebar: false,
       custom_open: 0,
-      currentUser:{}
+      currentUser:{},
+      allnotif:[],
+      now: new Date(),
     }
   },
   mounted(){
@@ -466,11 +448,11 @@ export default {
     this.ChangeLogo()
     this.ChangeTopBar()
     this.ChangeSideBar()
-  },
-  computed:{
-    side(){
-      return this.$route.path !== '/login'
-    },
+
+    //la fonction qui actualise dynamiquement notre date
+    setInterval(() => {
+      this.now = new Date();
+    }, 1000);
   },
   methods:{
     Sentting(){
@@ -612,8 +594,15 @@ export default {
       })
       if (res.status === 200) {
         localStorage.removeItem('token')
+        this.currentUser = {}
         this.$router.push("/login")
       }
+    },
+    async AllNotification(){
+        const res = await axiosInstance.get('/allnotif')
+        if (res.status === 200) {
+            this.allnotif = res.data.notif4
+        }
     },
     async CurrentUser() {
       const res = await axiosInstance.get('/user', {
@@ -623,13 +612,27 @@ export default {
       })
       if (res.status === 200) {
         this.currentUser = res.data
-        console.log(this.currentUser)
       }
-    }
+    },
+    formatCommentDate(date) {
+      const commentDate = new Date(date);
+
+      if (isSameDay(commentDate, this.now)) {
+          return formatDistance(commentDate, this.now, { locale: enUS, addSuffix: true });
+      } else {
+          return format(commentDate, "d MMMM yyyy 'at' HH:mm", { locale: enUS });
+      }
+    },
+  },
+  computed:{
+    side(){
+      return this.$route.path !== '/login'
+    },
   },
   created() {
     this.CurrentUser()
-  }
+    this.AllNotification()
+  },
   
 }
 </script>

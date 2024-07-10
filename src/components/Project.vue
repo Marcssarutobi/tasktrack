@@ -253,6 +253,12 @@ export default {
             countTas: "",
             statutsTas: "",
             percent:0,
+            dataNotif:{
+                user_id:"",
+                subject:"",
+                message:"",
+                status: true
+            }
 
             
         }
@@ -353,6 +359,17 @@ export default {
                         // Supprimer l'élément
                         backdropElement.remove();
                     }
+
+                    const prj = res.data.prj
+
+                    this.dataNotif.user_id = prj.assignTo
+                    this.dataNotif.subject = prj.name
+                    this.dataNotif.message = `Un nouveau projet vous a été attribué récemment. Nous vous encourageons à consulter la liste de vos projets pour obtenir tous les détails nécessaires. Veuillez vérifier attentivement les informations fournies et vous familiariser avec les objectifs et les exigences du projet. Si vous avez des questions ou avez besoin de clarifications supplémentaires, n'hésitez pas à contacter votre responsable de projet.`
+
+                    const notif = await axiosInstance.post('/createnotif',this.dataNotif)
+                    if (notif.status === 200) {
+                        console.log('ok')
+                    }
                 }
             } else {
                 this.isOffcanvasVisible = true
@@ -405,29 +422,6 @@ export default {
         },
          GetTaskCount(projectId) {
             return this.countTas = this.alltask.filter(tasks => tasks.prj_id === projectId).length
-        },
-        StatusPrj(projectId) {
-          this.alltask.filter(tasks => tasks.prj_id === projectId).length
-
-            // if (this.alltask.every(value => value.prj_id === projectId)) {
-            //     if (this.alltask.every(value => value.status === "No start")) {
-            //         return this.statutsTas = "No start"
-            //     } else if (this.alltask.some(value => value.status === "In progress") || this.alltask.every(value => value.status === "In progress")) {
-            //         return this.statutsTas = "In progress"
-            //     } else if (this.alltask.every(value => value.status === "Completed")) {
-            //         return this.statutsTas = "Completed"
-            //     }
-            // } else if (count === 0) {
-            //     this.statutsTas = "No start"
-            //     return this.statutsTas
-            // }
-            
-                if (this.alltask.every(value => value.prj_id === projectId && value.status === "No start")) {
-                    return this.statutsTas = "No start"
-                } 
-            
-           
-            
         },
         PercentPrj(projectId) {
             const ProjectTask = this.alltask.filter(task => task.prj_id === projectId)

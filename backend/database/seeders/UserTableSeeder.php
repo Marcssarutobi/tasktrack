@@ -16,8 +16,8 @@ class UserTableSeeder extends Seeder
     public function run()
     {
         User::insert([
-            'lastname'=>"Super-Admin",
-            'fistname'=>"Super-Admin",
+            'lastname'=>"Admin",
+            'fistname'=>"Admin",
             'email'=>"superadmin@gmail.com",
             'phone'=>'61000000',
             'phone'=>'61000000',

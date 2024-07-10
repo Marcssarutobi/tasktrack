@@ -62,4 +62,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Task::class);
     }
+    public function notification(){
+        return $this->hasMany(Notification::class);
+    }
 }

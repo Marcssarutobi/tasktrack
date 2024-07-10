@@ -259,7 +259,12 @@ export default {
             count: 0,
             gettask:{},
             updateModal: false,
-
+            dataNotif:{
+                user_id:"",
+                subject:"",
+                message:"",
+                status: true
+            }
             
         }
     },
@@ -365,6 +370,17 @@ export default {
                         if (backdropElement) {
                             // Supprimer l'élément
                             backdropElement.remove();
+                        }
+
+                        const task = res.data.tsk
+
+                        this.dataNotif.user_id = task.assignTo
+                        this.dataNotif.subject = task.task_name
+                        this.dataNotif.message = `Une nouvelle Tâche vous a été attribué récemment.Nous vous encourageons à consulter la liste de vos projets pour obtenir tous les détails nécessaires. Veuillez vérifier attentivement les informations fournies et vous familiariser avec les objectifs et les exigences du projet. Si vous avez des questions ou avez besoin de clarifications supplémentaires, n'hésitez pas à contacter votre responsable de projet.`
+
+                        const notif = await axiosInstance.post('/createnotif',this.dataNotif)
+                        if (notif.status === 200) {
+                            console.log('ok')
                         }
                     }
                 } else {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
@@ -61,3 +62,10 @@ Route::get('/alltask',[TaskController::class, 'AllTask']);
 Route::get('/gettask/{id}',[TaskController::class, 'GetTask']);
 Route::post('/updatetask',[TaskController::class, 'UpdateTask']);
 Route::post('/deletetask',[TaskController::class, 'DeleteTask']);
+
+//notification
+Route::post('/createnotif',[NotificationController::class, 'CreateNotif']);
+Route::get('/allnotif',[NotificationController::class, 'AllNotif']);
+Route::get('/getnotif/{id}',[NotificationController::class, 'GetNotif']);
+Route::post('/updatenotif',[NotificationController::class, 'UpdateNotif']);
+Route::post('/deletenotif',[NotificationController::class, 'DeleteNotif']);
