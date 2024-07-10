@@ -51,6 +51,12 @@
               </router-link>
             </li>
             <li class="nav-item">
+              <router-link to="/report" class="link">
+                <i class="fas fa-file"></i>
+                <p>Report</p>
+              </router-link>
+            </li>
+            <li class="nav-item">
               <router-link  to="/notification" class="link">
                 <i class="fas fa-bell"></i>
                 <p>Notifications <span class="badge bg-success ms-3">{{ $store.state.notificationCount }}</span></p>

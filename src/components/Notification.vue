@@ -27,7 +27,7 @@
                 <div class="card-body" style="height: 650px; overflow-y: scroll;">
                     <div class="vide" v-if="NotificationFilter.length === 0">
                         <i class="fas fa-bell-slash"></i>
-                        <span>Aucune Notification</span>
+                        <span>No Notifications</span>
                     </div>
                     <div v-else>
                         <div class="msg p-3 mb-3" v-for="notif in NotificationFilter" :key="notif.id" style="cursor: pointer;" :style="notif.status === 1 ? 'border-left: 5px solid #151a2b;':'border-left: 5px solid #b3b7c4;'">

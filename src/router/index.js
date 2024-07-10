@@ -23,6 +23,11 @@ const routes = [
         component: ()=> import('@/components/Calendar.vue')
     },
     {
+        path:'/report',
+        meta: { requiresAuth: true },
+        component: ()=> import('@/components/report.vue')
+    },
+    {
         path:'/notification',
         meta: { requiresAuth: true },
         component: ()=> import('@/components/Notification.vue')
