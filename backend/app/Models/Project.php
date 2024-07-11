@@ -19,4 +19,7 @@ class Project extends Model
     {
         return $this->hasMany(Task::class, 'prj_id');
     }
+    public function reports(){
+        return $this->hasMany(Report::class, 'prj_id');
+    }
 }

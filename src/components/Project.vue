@@ -45,14 +45,14 @@
                             </thead>
                             <tbody>
                                <tr v-for="prj in allproject" :key="prj.id">
-                                    <th scope="row">{{ prj.name }}</th>
-                                    <td class="text-start">{{ GetUserName(prj.assignTo) }}</td>
-                                    <td class="text-start">{{ prj.startDate }}</td>
-                                    <td class="text-start">{{ prj.endDate }}</td>
-                                    <td class="text-start">{{ GetTaskCount(prj.id) }}</td>
-                                    <td class="text-start">{{ PercentPrj(prj.id) }}%</td>
-                                    <td class="text-start">{{ prj.statuts }}</td>
-                                    <td>
+                                    <th v-if="prj.assignTo === currentUser.id" scope="row">{{ prj.name }}</th>
+                                    <td v-if="prj.assignTo === currentUser.id" class="text-start">{{ GetUserName(prj.assignTo) }}</td>
+                                    <td v-if="prj.assignTo === currentUser.id" class="text-start">{{ prj.startDate }}</td>
+                                    <td v-if="prj.assignTo === currentUser.id" class="text-start">{{ prj.endDate }}</td>
+                                    <td v-if="prj.assignTo === currentUser.id" class="text-start">{{ GetTaskCount(prj.id) }}</td>
+                                    <td v-if="prj.assignTo === currentUser.id" class="text-start">{{ PercentPrj(prj.id) }}%</td>
+                                    <td v-if="prj.assignTo === currentUser.id" class="text-start">{{ prj.statuts }}</td>
+                                    <td v-if="prj.assignTo === currentUser.id">
                                         <div class="dropdown">
                                             <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton"
                                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -258,7 +258,8 @@ export default {
                 subject:"",
                 message:"",
                 status: true
-            }
+            },
+            currentUser:{},
 
             
         }
@@ -500,12 +501,24 @@ export default {
                 })
             }
         },
+        async CurrentUser() {
+            const res = await axiosInstance.get('/user', {
+                headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            if (res.status === 200) {
+                this.currentUser = res.data
+                
+            }
+        }
        
     },
     created() {
         this.AllUser()
         this.AllProject()
         this.Count()
+        this.CurrentUser()
     }
 }
 </script>

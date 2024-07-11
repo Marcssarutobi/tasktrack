@@ -93,7 +93,7 @@
     <!-- Modale Add Report -->
 
     <div v-if="addmodal" class="modal fade show"   tabindex="-1" aria-hidden="true" style="display: block; background: rgba(0, 0, 0, .5);">
-        <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content rounded-0 border-0">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Report</h5>
@@ -104,6 +104,7 @@
                         <label for="">Project Name :</label>
                         <select name="" class=" form-select" id="" style="height: 50px;">
                             <option selected disabled value="">Select Project</option>
+                            <option v-for="prj in ProjectFilter" :key="prj.id" :value="prj.id">{{ prj.name }}</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -119,7 +120,7 @@
                                 tinycomments_author: 'Author name',
                                 
                             }"
-                            style="height: 722px;"
+                            style="height: 700px;"
                         />
 
                     </div>
@@ -139,6 +140,7 @@
 </template>
 
 <script>
+import axiosInstance from '@/plugins/axios';
 import Editor from '@tinymce/tinymce-vue'
 export default {
     name:"ReportView",
@@ -147,8 +149,38 @@ export default {
     },
     data(){
         return{
-            addmodal: false
+            addmodal: false,
+            allproject:[],
+            currentUser:{},
         }
+    },
+    methods:{
+        async AllPrj(){
+            const res = await axiosInstance.get('/allproject')
+            if (res.status === 200) {
+                this.allproject = res.data.all
+            }
+        },
+        async CurrentUser() {
+            const res = await axiosInstance.get('/user', {
+                headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            if (res.status === 200) {
+                this.currentUser = res.data
+                
+            }
+        }
+    },
+    computed:{
+        ProjectFilter(){
+            return this.allproject.filter(prj => prj.assignTo === this.currentUser.id)
+        }
+    },
+    created(){
+        this.AllPrj()
+        this.CurrentUser()
     }
 }
 </script>

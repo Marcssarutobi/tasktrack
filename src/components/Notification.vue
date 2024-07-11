@@ -36,7 +36,7 @@
                                 <p class="txt">{{ notif.message }} </p>
                             </div>
                             <div class="breadcrumbs ms-2 btns">
-                                <button class="btn btn-white border"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-white border" @click="DeleteMsg(notif.id)"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                     </div>
@@ -61,6 +61,7 @@
 
 <script>
 import axiosInstance from '@/plugins/axios';
+import Swal from 'sweetalert2';
 export default {
     name:"NoticationVue",
     data(){
@@ -105,6 +106,40 @@ export default {
             if (res.status === 200) {
                 this.currentUser = res.data
                 
+            }
+        },
+        async DeleteMsg(id){
+            const res = await axiosInstance.get('/getnotif/'+id)
+            if (res.status === 200) {
+                this.getnotif = res.data.notif
+                Swal.fire({
+                    title: "Do you want to delete this message?",
+                    text: "You won't be able to go back!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    cancelButtonColor: "#d33",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Supprimer",
+                    cancelButtonText: "Fermer"
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const del = await axiosInstance.post('/deletenotif', this.getnotif)
+                        if (del.status === 200) {
+                            Swal.fire({
+                                position: "center",
+                                icon: "success",
+                                title: "Delete perform",
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            const index = this.allnotif.findIndex(notif => notif.id === this.getnotif.id)
+                            if (index !== -1) {
+                                this.allnotif.splice(index, 1)
+                                this.getnotif = {}
+                            }
+                        }
+                    }
+                })
             }
         }
     },

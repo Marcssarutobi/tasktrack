@@ -5,6 +5,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -69,3 +70,6 @@ Route::get('/allnotif',[NotificationController::class, 'AllNotif']);
 Route::get('/getnotif/{id}',[NotificationController::class, 'GetNotif']);
 Route::post('/updatenotif',[NotificationController::class, 'UpdateNotif']);
 Route::post('/deletenotif',[NotificationController::class, 'DeleteNotif']);
+
+//report
+Route::post('/createreport',[ReportController::class, 'CreateReport']);
