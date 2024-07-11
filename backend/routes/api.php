@@ -73,3 +73,7 @@ Route::post('/deletenotif',[NotificationController::class, 'DeleteNotif']);
 
 //report
 Route::post('/createreport',[ReportController::class, 'CreateReport']);
+Route::get('/allreport',[ReportController::class, 'AllReport']);
+Route::get('/getreport/{id}',[ReportController::class, 'GetReport']);
+Route::post('/updatereport',[ReportController::class, 'UpdateReport']);
+Route::post('/deletereport',[ReportController::class, 'DeleteReport']);
