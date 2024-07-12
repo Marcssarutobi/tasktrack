@@ -48,9 +48,9 @@
                             </thead>
                             <tbody>
                                <tr v-for="rpt in allreport" :key="rpt.id">
-                                    <th scope="row">{{ GetProject(rpt.prj_id) }}</th>
-                                    <td scope="row">{{ formatCommentDate(rpt.created_at) }}</td>
-                                    <td>
+                                    <th v-if="user" scope="row">{{ GetProject(rpt.prj_id) }}</th>
+                                    <td v-if="user" scope="row">{{ formatCommentDate(rpt.created_at) }}</td>
+                                    <td v-if="user">
                                         <div class="dropdown">
                                             <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton"
                                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -240,7 +240,8 @@ export default {
             totalPage: 0,
             now: new Date(),
             getreport:{},
-            count:0
+            count:0,
+            user: false
         }
     },
     mounted(){
@@ -264,7 +265,19 @@ export default {
             })
             if (res.status === 200) {
                 this.currentUser = res.data
-                
+                this.allproject.forEach(prj => {
+                    if (prj.tasks) {
+                        prj.tasks.forEach(task =>{
+                            if (prj.assignTo === this.currentUser.id || task.assignTo === this.currentUser.id) {
+                               this.user = true
+                            }else{
+                                this.user = false
+                            }
+                        })
+                    }else{
+                        console.log('non ok')
+                    }
+                })
             }
         },
         EmptyResult(){
@@ -418,7 +431,7 @@ export default {
                     }
                 })
             }
-        }
+        },
     },
     computed:{
         ProjectFilter(){

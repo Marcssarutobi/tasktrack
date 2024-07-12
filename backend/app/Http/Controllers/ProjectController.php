@@ -32,7 +32,7 @@ class ProjectController extends Controller
     }
     public function AllProject(){
         $prj = Project::with('tasks')->orderBy('id','desc')->paginate(9);
-        $all = Project::orderBy('id','desc')->get();
+        $all = Project::with('tasks')->orderBy('id','desc')->get();
         $count = Project::count();
         $countPrj = Project::with('tasks')->get();
         return response()->json([

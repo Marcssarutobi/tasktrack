@@ -52,13 +52,13 @@
                             </thead>
                             <tbody>
                                <tr v-for="task in alltask" :key="task.id">
-                                    <th scope="row">{{ task.task_name }}</th>
-                                    <td class="text-start">{{ GetProject(task.prj_id) }}</td>
-                                    <td class="text-start">{{ GetUserName(task.assignTo) }}</td>
-                                    <td class="text-start">{{ task.startDate }}</td>
-                                    <td class="text-start">{{ task.endDate }}</td>
-                                    <td class="text-start">{{ task.status }}</td>
-                                    <td>
+                                    <th v-if="task.assignTo === currentUser.id" scope="row">{{ task.task_name }}</th>
+                                    <td v-if="task.assignTo === currentUser.id" class="text-start">{{ GetProject(task.prj_id) }}</td>
+                                    <td v-if="task.assignTo === currentUser.id" class="text-start">{{ GetUserName(task.assignTo) }}</td>
+                                    <td v-if="task.assignTo === currentUser.id" class="text-start">{{ task.startDate }}</td>
+                                    <td v-if="task.assignTo === currentUser.id" class="text-start">{{ task.endDate }}</td>
+                                    <td v-if="task.assignTo === currentUser.id" class="text-start">{{ task.status }}</td>
+                                    <td v-if="task.assignTo === currentUser.id">
                                         <div class="dropdown">
                                             <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton"
                                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -264,7 +264,8 @@ export default {
                 subject:"",
                 message:"",
                 status: true
-            }
+            },
+            currentUser:{},
             
         }
     },
@@ -478,6 +479,17 @@ export default {
                     }
                 })
             }
+        },
+        async CurrentUser() {
+            const res = await axiosInstance.get('/user', {
+                headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            if (res.status === 200) {
+                this.currentUser = res.data
+                
+            }
         }
         
     },
@@ -486,6 +498,7 @@ export default {
         this.AllUser()
         this.AllTask()
         this.Count()
+        this.CurrentUser()
     }
 }
 </script>
