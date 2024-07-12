@@ -32,6 +32,36 @@ class ReportController extends Controller
         ]);
     }
     public function AllReport(){
-        $report = Report::orderBy();
+        $report9 = Report::orderBy('id','desc')->paginate(9);
+        $count = Report::count();
+        return response()->json([
+            "report9"=>$report9,
+            "count"=>$count
+        ]);
+    }
+    public function GetReport($id){
+        $report = Report::where('id',$id)->first();
+        return response()->json([
+            "report"=>$report
+        ]);
+    }
+    public function UpdateReport(Request $request){
+        $this->validate($request,[
+            "prj_id"=>"required",
+            "content"=>"required"
+        ]);
+        $report = Report::where('id',$request->id)->update([
+            'prj_id' => $request->prj_id,
+            'content' => $request->content,
+        ]);
+        return response()->json([
+            "report"=>$report
+        ]);
+    }
+    public function DeleteReport(Request $request){
+        $report = Report::where('id',$request->id)->delete();
+        return response()->json([
+            "report"=>$report
+        ]);
     }
 }
