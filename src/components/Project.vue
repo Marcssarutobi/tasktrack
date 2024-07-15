@@ -440,7 +440,6 @@ export default {
             if (res.status === 200) {
                 this.getprj = res.data.prj
                 this.GetTaskCount(this.getprj.id)
-                this.StatusPrj(this.getprj.id)
                 this.getprj.nbrTask = this.countTas
                 this.getprj.status = this.statutsTas
             }

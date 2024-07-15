@@ -12,27 +12,27 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-sm-6 col-md-3">
+    <div class="row justify-content-center">
+      <div class="col-sm-6 col-md-4">
         <div class="card card-stats card-round">
           <div class="card-body">
             <div class="row align-items-center">
               <div class="col-icon">
                 <div class="icon-big text-center icon-primary bubble-shadow-small">
-                  <i class="fas fa-users"></i>
+                  <i class="fas fa-file-contract"></i>
                 </div>
               </div>
               <div class="col col-stats ms-3 ms-sm-0">
                 <div class="numbers">
                   <p class="card-category">Project</p>
-                  <h4 class="card-title">1294</h4>
+                  <h4 class="card-title">{{ ProjectFilterAll }}</h4>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-sm-6 col-md-3">
+      <div class="col-sm-6 col-md-4">
         <div class="card card-stats card-round">
           <div class="card-body">
             <div class="row align-items-center">
@@ -43,34 +43,16 @@
               </div>
               <div class="col col-stats ms-3 ms-sm-0">
                 <div class="numbers">
-                  <p class="card-category">Active Task</p>
-                  <h4 class="card-title">1303</h4>
+                  <p class="card-category">Task</p>
+                  <h4 class="card-title">{{ TaskFilterInProgress }}</h4>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-sm-6 col-md-3">
-        <div class="card card-stats card-round">
-          <div class="card-body">
-            <div class="row align-items-center">
-              <div class="col-icon">
-                <div class="icon-big text-center icon-success bubble-shadow-small">
-                  <i class="fas fa-users"></i>
-                </div>
-              </div>
-              <div class="col col-stats ms-3 ms-sm-0">
-                <div class="numbers">
-                  <p class="card-category">Teams</p>
-                  <h4 class="card-title">1345</h4>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-6 col-md-3">
+      
+      <div class="col-sm-6 col-md-4">
         <div class="card card-stats card-round">
           <div class="card-body">
             <div class="row align-items-center">
@@ -82,7 +64,7 @@
               <div class="col col-stats ms-3 ms-sm-0">
                 <div class="numbers">
                   <p class="card-category">Project completed</p>
-                  <h4 class="card-title">576</h4>
+                  <h4 class="card-title">{{ ProjectFilterCompleted }}</h4>
                 </div>
               </div>
             </div>
@@ -367,8 +349,51 @@
 </template>
 
 <script>
+import axiosInstance from '@/plugins/axios';
+
 export default {
   name: 'AccueilVue',
+  data(){
+    return{
+      allprj:[],
+      currentUser:{},
+    }
+  },
+  methods:{
+    async AllProject(){
+      const res = await axiosInstance.get('/allproject')
+      if (res.status === 200) {
+        this.allprj = res.data.all
+        console.log(this.allprj)
+      }
+    },
+    async CurrentUser() {
+        const res = await axiosInstance.get('/user', {
+            headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        if (res.status === 200) {
+            this.currentUser = res.data
+            
+        }
+    },
+  },
+  created(){
+    this.AllProject()
+    this.CurrentUser()
+  },
+  computed:{
+    ProjectFilterAll(){
+      return this.allprj.filter(prj => prj.assignTo === this.currentUser.id).length
+    },
+    TaskFilterInProgress(){
+      return this.allprj.filter(prj => prj.assignTo === this.currentUser.id || prj.tasks.assignTo === this.currentUser.id ).length
+    },
+    ProjectFilterCompleted(){
+      return this.allprj.filter(prj => prj.assignTo === this.currentUser.id && prj.status === "Completed").length
+    },
+  }
 }
 </script>
 
